@@ -1,0 +1,14 @@
+server:
+    port: ${SERVER_PORT}
+spring:
+    cloud:
+        config:
+            server:
+                git:
+                    uri: ${SPRING_CLOUD_CONFIG_SERVER_GIT_URI}
+                    force-pull: true
+                    default-label: main
+eureka:
+    client:
+        service-url:
+            defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}

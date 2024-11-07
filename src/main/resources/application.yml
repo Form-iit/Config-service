@@ -1,0 +1,21 @@
+spring:
+    application:
+        name: config-server
+    profiles:
+        active: ${ACTIVE_PROFILE}
+management:
+    endpoints:
+        web:
+            exposure:
+                include: health, info, refresh, env
+            base-path: /actuator
+    endpoint:
+        health:
+            show-details: ALWAYS
+        env:
+            show-values: ALWAYS
+app:
+    security:
+        user:
+            name: ${SECURE_USER_NAME}
+            password: ${SECURE_USER_PASSWORD}
