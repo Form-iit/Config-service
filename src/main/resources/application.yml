@@ -2,7 +2,7 @@ spring:
     application:
         name: config-server
     profiles:
-        active: ${ACTIVE_PROFILE}
+        active: ${SPRING_PROFILES_ACTIVE}
 management:
     endpoints:
         web:
@@ -14,8 +14,3 @@ management:
             show-details: ALWAYS
         env:
             show-values: ALWAYS
-app:
-    security:
-        user:
-            name: ${SECURE_USER_NAME}
-            password: ${SECURE_USER_PASSWORD}

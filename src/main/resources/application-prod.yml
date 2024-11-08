@@ -12,3 +12,8 @@ eureka:
     client:
         service-url:
             defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+app:
+    security:
+        user:
+            name: ${APP_SECURITY_USER_NAME}
+            password: ${APP_SECURITY_USER_PASSWORD}
