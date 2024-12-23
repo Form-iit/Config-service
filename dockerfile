@@ -1,5 +1,5 @@
-FROM openjdk:17-jdk-slim
+FROM amazoncorretto:17-alpine
 WORKDIR /app
 COPY target/*.jar app.jar
-RUN apt-get update && apt-get install -y curl git && rm -rf /var/lib/apt/lists/*
+RUN apk --no-cache add curl git
 ENTRYPOINT ["java", "-jar", "app.jar"]
