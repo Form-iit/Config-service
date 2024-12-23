@@ -1,6 +1,5 @@
 package com.example.configserver.config;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,39 +19,43 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${app.security.user.name}")
-    private String username;
-    @Value("${app.security.user.password}")
-    private String password;
+  @Value("${app.security.user.name}")
+  private String username;
 
-    @Bean
-    public SecurityFilterChain filterChainConfiguration(HttpSecurity http) throws Exception {
-        return http
-                .authorizeHttpRequests(authorize -> authorize
+  @Value("${app.security.user.password}")
+  private String password;
 
-                        .requestMatchers("/actuator/**").hasRole("ADMIN")    // Require authentication for actuator endpoints
-                        .requestMatchers("/eureka/**").permitAll()  // Allow Eureka dashboard access*//*
+  @Bean
+  public SecurityFilterChain filterChainConfiguration(HttpSecurity http) throws Exception {
+    return http.authorizeHttpRequests(
+            authorize ->
+                authorize
+                    .requestMatchers("/actuator/**")
+                    .hasRole("ADMIN") // Require authentication for actuator endpoints
+                    .requestMatchers("/eureka/**")
+                    .permitAll() // Allow Eureka dashboard access*//*
+                    .anyRequest()
+                    .authenticated() // Allow all other requests
+            )
+        .httpBasic(Customizer.withDefaults()) // Enable Basic Authentication (optional)
+        .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for simplicity; adjust as needed
+        .build();
+  }
 
-                        .anyRequest().authenticated()  // Allow all other requests
-                )
-                .httpBasic(Customizer.withDefaults())  // Enable Basic Authentication (optional)
-                .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF for simplicity; adjust as needed
-                .build();
-    }
+  @Bean
+  public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
 
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+    UserDetails admin =
+        User.builder()
+            .username(username)
+            .password(passwordEncoder.encode(password))
+            .roles("ADMIN")
+            .build();
+    return new InMemoryUserDetailsManager(admin);
+  }
 
-        UserDetails admin = User.builder()
-                .username(username)
-                .password(passwordEncoder.encode(password))
-                .roles("ADMIN")
-                .build();
-        return new InMemoryUserDetailsManager(admin);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();  // Password encoder
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder(); // Password encoder
+  }
 }
